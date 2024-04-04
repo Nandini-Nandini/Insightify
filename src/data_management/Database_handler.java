@@ -11,11 +11,11 @@ import java.util.List;
 
 
 
-public class DatabaseHandler {
+public class Database_handler {
     private Connection connection;
 
     // Default Constructor
-    public DatabaseHandler() {
+    public Database_handler() {
         // Default database username and password
         String username = "root"; // Change this to your MySQL username
         String password = "admin123"; // Change this to your MySQL password
@@ -25,7 +25,7 @@ public class DatabaseHandler {
     }
 
     // Constructor with Parameters
-    public DatabaseHandler(String hostname, String username, String password) {
+    public Database_handler(String hostname, String username, String password) {
         establishConnection(hostname, username, password);
     }
 
@@ -501,7 +501,7 @@ public class DatabaseHandler {
     
     public static void main(String[] args) {
         // Create an instance of DatabaseHandler
-        DatabaseHandler dbHandler = new DatabaseHandler();
+        Database_handler dbHandler = new Database_handler();
     
         // Test adding product information
         dbHandler.add_product_info("B12345", "https://example.com/product1", "Product 1", 4.5, "Brand A", 100, 50, 99.99);
