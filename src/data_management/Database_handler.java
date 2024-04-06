@@ -1,13 +1,12 @@
 package data_management;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
 import java.util.List;
+
+import util.Static_utils;
 
 
 
@@ -20,7 +19,7 @@ public class Database_handler {
         String username = "root"; // Change this to your MySQL username
         String password = "admin123"; // Change this to your MySQL password
         String hostname = "localhost"; // Change this if your MySQL server is hosted elsewhere
-
+        
         establishConnection(hostname, username, password);
     }
 
@@ -45,9 +44,9 @@ public class Database_handler {
             connection = DriverManager.getConnection(url, username, password);
 
         } catch (SQLException e) {
-            log("Connection to database failed. Error: " + e.getMessage(), "establishConnection");
+            Static_utils.log("Connection to database failed. Error: " + e.getMessage(), "establishConnection");
         } catch (Exception e) {
-            log("JDBC Class not found error :"+e.getMessage(), "establishConnection");
+            Static_utils.log("JDBC Class not found error :"+e.getMessage(), "establishConnection");
         }
     }
 
@@ -68,7 +67,7 @@ public class Database_handler {
             "prod_price DOUBLE)";
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            log("Error creating Table1: " + e.getMessage(),"create_table_products");
+            Static_utils.log("Error creating Table1: " + e.getMessage(),"create_table_products");
         }
     }
 
@@ -91,7 +90,7 @@ public class Database_handler {
         }
         
         catch (SQLException e) {
-            log("Error creating reviews table: " + e.getMessage(),"create_table_reviews");
+            Static_utils.log("Error creating reviews table: " + e.getMessage(),"create_table_reviews");
             return false;
 
         }
@@ -111,7 +110,7 @@ public class Database_handler {
             stmt.executeUpdate(sql);
             return true;
         } catch (SQLException e) {
-            log("Error creating product_category table: " + e.getMessage(), "create_table_product_category");
+            Static_utils.log("Error creating product_category table: " + e.getMessage(), "create_table_product_category");
             return false;
         }
     }
@@ -137,7 +136,7 @@ public class Database_handler {
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            log("Error adding product information: " + e.getMessage(),"add_product_info");
+            Static_utils.log("Error adding product information: " + e.getMessage(),"add_product_info");
             return false;
         }
     }
@@ -167,7 +166,7 @@ public class Database_handler {
             }
             return true;
         } catch (SQLException e) {
-            log("Error reading products table: " + e.getMessage(), "get_prod_info");
+            Static_utils.log("Error reading products table: " + e.getMessage(), "get_prod_info");
             return false;
         }
     }
@@ -197,7 +196,7 @@ public class Database_handler {
             }
             return true;
         } catch (SQLException e) {
-            log("Error reading products table: " + e.getMessage(), "get_prod_info");
+            Static_utils.log("Error reading products table: " + e.getMessage(), "get_prod_info");
             return false;
         }
     }
@@ -223,7 +222,7 @@ public class Database_handler {
         pstmt.executeUpdate();
         return true;
     } catch (SQLException e) {
-        log("Error updating product information: " + e.getMessage(),"update_prod_info");
+        Static_utils.log("Error updating product information: " + e.getMessage(),"update_prod_info");
         return false;
     }
 }
@@ -239,7 +238,7 @@ public class Database_handler {
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            log("Error deleting record : " + e.getMessage(),"delete_prod_info");
+            Static_utils.log("Error deleting record : " + e.getMessage(),"delete_prod_info");
             return false;
         }
     }
@@ -263,7 +262,7 @@ public class Database_handler {
             pstmt.executeUpdate();
            return true;
         } catch (SQLException e) {
-           log("Error adding review information: " + e.getMessage(),"add_review_info");
+           Static_utils.log("Error adding review information: " + e.getMessage(),"add_review_info");
            return false;
         }
     }
@@ -290,7 +289,7 @@ public class Database_handler {
             }
             return true;
         } catch (SQLException e) {
-            log("Error reading reviews table: " + e.getMessage(), "get_review_info");
+            Static_utils.log("Error reading reviews table: " + e.getMessage(), "get_review_info");
             return false;
         }
     }
@@ -298,7 +297,7 @@ public class Database_handler {
         try {
             // Validating the column_name
             if (!isValidColumnName(column_name)) {
-                log("Invalid column name. Allowed values are 'asin', 'review_id', or 'user_profile_link'.","get_review_info");
+                Static_utils.log("Invalid column name. Allowed values are 'asin', 'review_id', or 'user_profile_link'.","get_review_info");
                 return null;
             }
 
@@ -323,7 +322,7 @@ public class Database_handler {
             }
         return reviewsList;
         } catch (SQLException e) {
-           log("Error reading reviews table: " + e.getMessage(),"get_review_info");
+           Static_utils.log("Error reading reviews table: " + e.getMessage(),"get_review_info");
            return null;
         }
     }
@@ -351,7 +350,7 @@ public class Database_handler {
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            log("Error updating review information: " + e.getMessage(),"update_review_info");
+            Static_utils.log("Error updating review information: " + e.getMessage(),"update_review_info");
             return false;
         }
     }
@@ -366,7 +365,7 @@ public class Database_handler {
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            log("Error deleting review: " + e.getMessage(),"delete_review_info");
+            Static_utils.log("Error deleting review: " + e.getMessage(),"delete_review_info");
             return false;
         }
     }
@@ -386,7 +385,7 @@ public class Database_handler {
                 int rowsAffected = pstmt.executeUpdate();
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                log("Error adding product category: " + e.getMessage(), "add_product_category");
+                Static_utils.log("Error adding product category: " + e.getMessage(), "add_product_category");
                 return false;
             }
         }
@@ -405,7 +404,7 @@ public class Database_handler {
                     categoriesList.add(categoryMap);
                 }
             } catch (SQLException e) {
-                log("Error reading product categories: " + e.getMessage(), "get_all_product_categories");
+                Static_utils.log("Error reading product categories: " + e.getMessage(), "get_all_product_categories");
             }
             return categoriesList;
         }
@@ -423,7 +422,7 @@ public class Database_handler {
                 }
                 return categoriesList;
             } catch (SQLException e) {
-                log("Error getting categories for ASIN " + asin + ": " + e.getMessage(), "get_categories_from_asin");
+                Static_utils.log("Error getting categories for ASIN " + asin + ": " + e.getMessage(), "get_categories_from_asin");
                 return null;
             }
             
@@ -442,7 +441,7 @@ public class Database_handler {
                 }
                 return asinList;
             } catch (SQLException e) {
-                log("Error getting ASINs for category " + category + ": " + e.getMessage(), "get_asin_from_categories");
+                Static_utils.log("Error getting ASINs for category " + category + ": " + e.getMessage(), "get_asin_from_categories");
                 return null;
             }
             
@@ -463,7 +462,7 @@ public class Database_handler {
                 }
                 return categoryCountList;
             } catch (SQLException e) {
-                log("Error getting category count: " + e.getMessage(), "get_category_count");
+                Static_utils.log("Error getting category count: " + e.getMessage(), "get_category_count");
                 return null;
             }
             
@@ -480,23 +479,12 @@ public class Database_handler {
             }
             return true;
         } catch (SQLException e) {
-            log("Error closing connection: " + e.getMessage(),"closeConnection");
+            Static_utils.log("Error closing connection: " + e.getMessage(),"closeConnection");
             return false;
         }
     }
 
-    // Log function to log errors
-    public void log(String error, String source) {
-        try {
-            FileWriter fileWriter = new FileWriter("database_handler.log", true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(java.time.LocalDateTime.now() + " - " + source + " - " + error);
-            bufferedWriter.newLine();
-            bufferedWriter.close();
-        } catch (IOException e) {
-            System.out.println("Error writing to log file: " + e.getMessage());
-        }
-    }
+    
 
     
     public static void main(String[] args) {
