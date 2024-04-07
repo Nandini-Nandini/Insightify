@@ -1,0 +1,1 @@
+2024-04-07T20:04:47.780 - establishConnection - Connection to database failed. Error: Access denied for user 'root'@'localhost' (using password: YES)

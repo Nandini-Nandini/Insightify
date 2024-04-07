@@ -47,7 +47,7 @@ public class Data_preprocessor {
             productInfo.put("prod_link", prod_link_text); 
             productInfo.put("name", name_text);    // string 
             productInfo.put("prod_overall_rating", prod_overall_rating_text); // float
-            productInfo.put("prod_brand", prod_brand_text);
+            productInfo.put("brand", prod_brand_text);
             productInfo.put("no_rating", no_rating_text);  // int
             productInfo.put("no_reviews", no_reviews_text); // int
             productInfo.put("prod_price", prod_price_text);  //float
@@ -94,7 +94,7 @@ public class Data_preprocessor {
                 String prod_link = (String) product_map.get("prod_link");
                 String name = (String) product_map.get("name");
                 Float prod_overall_rating = (Float) product_map.get("prod_overall_rating");
-                String prod_brand = (String) product_map.get("prod_brand");
+                String prod_brand = (String) product_map.get("brand");
                 int no_rating = (int) product_map.get("no_rating");
                 int no_reviews = (int) product_map.get("no_reviews");
                 Float prod_price = (Float) product_map.get("prod_price");
@@ -148,26 +148,69 @@ public class Data_preprocessor {
         return flag;
     }
 
-    public boolean extract_and_preprocess(List<String> asins, List<List<String> categories)
+    @SuppressWarnings("unchecked")
+    public boolean extract_and_preprocess(List<String> asins, List<List<String>> categories)
     {
         Amazon_scraper scraper=new Amazon_scraper(asins);
-        Map<String, Object> result= scraper.get_result();
-        List<Object> product_info=result.get("product_info");
-        List<Object> review_info=result.get("review_info");
+        Map<String, Object> result = scraper.get_result();
+        List<Object> product_infos = (List<Object>) result.get("product_info");
+        List<Object> review_infos = (List<Object>) result.get("review_info");
 
         List<String> asin = new ArrayList<>();
         List<String> prod_link = new ArrayList<>();
         List<String> name = new ArrayList<>();
         List<Float> prod_overall_rating = new ArrayList<>();
-        List<String> prod_brand = new ArrayList<>();;
-        List<Integer> no_rating = new ArrayList<>();;
-        List<Integer> no_reviews = new ArrayList<>();;
-        List<Float> prod_price = new ArrayList<>();;
-        
+        List<String> prod_brand = new ArrayList<>();
+        List<Integer> no_rating = new ArrayList<>();
+        List<Integer> no_reviews = new ArrayList<>();
+        List<Float> prod_price = new ArrayList<>();
 
-        
-        
-        preprocess_and_import_products(product_info.get(review_info), categories, asins, null, categories, null, null, null, null)
+        for(Object product_info_obj : product_infos){
+            Map<String, Object> product_info = (Map<String, Object>) product_info_obj;
+            asin.add((String)product_info.get("asin"));
+            prod_link.add((String)product_info.get("prod_link"));
+            name.add((String)product_info.get("name"));
+            prod_overall_rating.add((Float)product_info.get("prod_overall_rating"));
+            prod_brand.add((String)product_info.get("brand"));
+            no_rating.add((Integer)product_info.get("no_rating"));
+            no_reviews.add((Integer)product_info.get("no_reviews"));
+            prod_price.add((Float)product_info.get("prod_price"));
+        }
 
+        List<String> asins_review = new ArrayList<>();
+        List<Integer> review_id = new ArrayList<>();
+        List<String> review_title = new ArrayList<>();
+        List<String> review_text = new ArrayList<>();
+        List<Integer> review_star = new ArrayList<>();
+        List<String> user_profile_link = new ArrayList<>();
+
+        for(Object review_info_obj : review_infos){
+            Map<String, Object> review_info = (Map<String, Object>) review_info_obj;
+            asins_review.add((String) review_info.get("asins"));
+            review_id.add((Integer) review_info.get("review_ids"));
+            review_title.add((String) review_info.get("review_titles"));
+            review_text.add((String) review_info.get("review_texts"));
+            review_star.add((Integer) review_info.get("review_star"));
+            user_profile_link.add((String) review_info.get("user_profile_link"));
+        }
+        boolean flag = true;
+        flag = flag && preprocess_and_import_products(asin, prod_link, name, prod_overall_rating, prod_brand, no_rating, no_reviews, prod_price, categories);
+        flag = flag && preprocess_and_import_reviews(asins_review, review_id, review_title, review_text, review_star, user_profile_link);
+        return flag;
+    }
+
+    public static void main(String[] args) {
+        Data_preprocessor preprocessor = new Data_preprocessor();
+        List<String> to_check_asins = new ArrayList<>();
+        List<List<String>> to_check_categories = new ArrayList<>();
+        List<String> categories_1 = new ArrayList<>();
+        List<String> categories_2 = new ArrayList<>();
+        to_check_asins.add("B0BZCR6TNK");
+        to_check_asins.add("B07WHSR1NR");
+        categories_1.add("Mobiles");
+        categories_2.add("Mobiles");
+        to_check_categories.add(categories_1);
+        to_check_categories.add(categories_2);
+        preprocessor.extract_and_preprocess(null, null);
     }
 }
