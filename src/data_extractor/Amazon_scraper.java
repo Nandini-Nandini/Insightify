@@ -173,7 +173,7 @@ public class Amazon_scraper {
 
         Document soup = Jsoup.parse(driver.getPageSource());
         Element reviewCountDiv = soup.selectFirst("div.a-row.a-spacing-base.a-size-base");
-        String reviewCountText = reviewCountDiv.text().strip().replace(",","").split("ratings ")[1].split("")[0];
+        String reviewCountText = reviewCountDiv.text().trim().replace(",","").split("ratings ")[1].split("")[0];
         int reviewCountInteger = Integer.parseInt(reviewCountText);
         int counter = 0;
 

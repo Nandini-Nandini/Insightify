@@ -1,0 +1,10 @@
+bin/App.class
+bin/data_extractor/Amazon_scraper.class
+bin/data_management/Data_preprocessor.class
+bin/data_management/Database_handler.class
+bin/util/Static_utils.class
+bin/App.class
+bin/data_extractor/Amazon_scraper.class
+bin/data_management/Data_preprocessor.class
+bin/data_management/Database_handler.class
+bin/util/Static_utils.class
