@@ -1,11 +1,13 @@
 package data_management;
 
 import java.util.*;
+import data_extractor.Amazon_scraper;
 
 public class Data_preprocessor {
 
      // Global variable to store the DataHandler object
      private Database_handler data_handler;
+     
 
      public Data_preprocessor(){
         // Initialize DataHandler object
@@ -144,5 +146,28 @@ public class Data_preprocessor {
             }
         }
         return flag;
+    }
+
+    public boolean extract_and_preprocess(List<String> asins, List<List<String> categories)
+    {
+        Amazon_scraper scraper=new Amazon_scraper(asins);
+        Map<String, Object> result= scraper.get_result();
+        List<Object> product_info=result.get("product_info");
+        List<Object> review_info=result.get("review_info");
+
+        List<String> asin = new ArrayList<>();
+        List<String> prod_link = new ArrayList<>();
+        List<String> name = new ArrayList<>();
+        List<Float> prod_overall_rating = new ArrayList<>();
+        List<String> prod_brand = new ArrayList<>();;
+        List<Integer> no_rating = new ArrayList<>();;
+        List<Integer> no_reviews = new ArrayList<>();;
+        List<Float> prod_price = new ArrayList<>();;
+        
+
+        
+        
+        preprocess_and_import_products(product_info.get(review_info), categories, asins, null, categories, null, null, null, null)
+
     }
 }

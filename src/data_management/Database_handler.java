@@ -118,7 +118,7 @@ public class Database_handler {
 
     // CRUD Functions for products
     // Create
-    public boolean  add_product_info(String asin, String prod_link, String name, double prod_overall_rating, String prod_brand, int no_rating, int no_reviews,double prod_price ) {
+    public boolean  add_product_info(String asin, String prod_link, String name, float prod_overall_rating, String prod_brand, int no_rating, int no_reviews,float prod_price ) {
         try {
             create_table_products();
             PreparedStatement pstmt = connection.prepareStatement(
@@ -128,11 +128,11 @@ public class Database_handler {
             pstmt.setString(1, asin);
             pstmt.setString(2, prod_link);
             pstmt.setString(3, name);
-            pstmt.setDouble(4, prod_overall_rating);
+            pstmt.setFloat(4, prod_overall_rating);
             pstmt.setString(5, prod_brand);
             pstmt.setInt(6, no_rating);
             pstmt.setInt(7, no_reviews);
-            pstmt.setDouble(8, prod_price);
+            pstmt.setFloat(8, prod_price);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
