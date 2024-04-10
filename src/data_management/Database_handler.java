@@ -78,7 +78,7 @@ public class Database_handler {
             String sql = "CREATE TABLE IF NOT EXISTS reviews (" +
                     "id INT AUTO_INCREMENT UNIQUE ," +
                     "asin VARCHAR(255)," +
-                    "review_id INT PRIMARY KEY," +
+                    "review_id VARCHAR(255) PRIMARY KEY," +
                     "review_title VARCHAR(255)," +
                     "review_text TEXT," +
                     "review_star INT," +
@@ -246,7 +246,7 @@ public class Database_handler {
     
 
     // CRUD for reviews
-    public boolean add_review_info(String asin, int review_id, String review_title, String review_text, int review_star, String user_profile_link) {
+    public boolean add_review_info(String asin, String review_id, String review_title, String review_text, int review_star, String user_profile_link) {
         try {
             create_table_reviews();
             PreparedStatement pstmt = connection.prepareStatement(
@@ -254,7 +254,7 @@ public class Database_handler {
                             "VALUES (?, ?, ?, ?, ?, ?)"
             );
             pstmt.setString(1, asin);
-            pstmt.setInt(2, review_id);
+            pstmt.setString(2, review_id);
             pstmt.setString(3, review_title);
             pstmt.setString(4, review_text);
             pstmt.setInt(5, review_star);
@@ -262,7 +262,7 @@ public class Database_handler {
             pstmt.executeUpdate();
            return true;
         } catch (SQLException e) {
-           Static_utils.log("Error adding review information: " + e.getMessage(),"add_review_info");
+           Static_utils.log("Error adding review information: " + e.getMessage()+ " for asin: "+asin,"add_review_info");
            return false;
         }
     }
@@ -487,70 +487,70 @@ public class Database_handler {
     
 
     
-    public static void main(String[] args) {
-        // Create an instance of DatabaseHandler
-        Database_handler dbHandler = new Database_handler();
+    // public static void main(String[] args) {
+    //     // Create an instance of DatabaseHandler
+    //     Database_handler dbHandler = new Database_handler();
     
-        // Test adding product information
-        dbHandler.add_product_info("B12345", "https://example.com/product1", "Product 1", 4.5, "Brand A", 100, 50, 99.99);
-        dbHandler.add_product_info("B67890", "https://example.com/product2", "Product 2", 3.8, "Brand B", 80, 30, 49.99);
+    //     // Test adding product information
+    //     dbHandler.add_product_info("B12345", "https://example.com/product1", "Product 1", 4.5, "Brand A", 100, 50, 99.99);
+    //     dbHandler.add_product_info("B67890", "https://example.com/product2", "Product 2", 3.8, "Brand B", 80, 30, 49.99);
     
-        // Test getting product information
-        dbHandler.get_prod_info(); // Print all products
-        dbHandler.get_prod_info("B12345"); // Print product with ASIN "B12345"
+    //     // Test getting product information
+    //     dbHandler.get_prod_info(); // Print all products
+    //     dbHandler.get_prod_info("B12345"); // Print product with ASIN "B12345"
     
-        // Test updating product information
-        dbHandler.update_prod_info("B12345", "B12345", "https://example.com/product1-new", "Product 1 Updated", 4.7, "Brand A", 110, 60, 109.99);
+    //     // Test updating product information
+    //     dbHandler.update_prod_info("B12345", "B12345", "https://example.com/product1-new", "Product 1 Updated", 4.7, "Brand A", 110, 60, 109.99);
     
-        // Test deleting product information
-        dbHandler.delete_prod_info("B67890");
+    //     // Test deleting product information
+    //     dbHandler.delete_prod_info("B67890");
     
-        // Test adding review information
-        dbHandler.add_review_info("B12345", 1, "Review 1", "This is review 1", 5, "https://example.com/user1");
-        dbHandler.add_review_info("B12345", 2, "Review 2", "This is review 2", 4, "https://example.com/user2");
+    //     // Test adding review information
+    //     dbHandler.add_review_info("B12345", 1, "Review 1", "This is review 1", 5, "https://example.com/user1");
+    //     dbHandler.add_review_info("B12345", 2, "Review 2", "This is review 2", 4, "https://example.com/user2");
     
-        // Test getting review information
-        dbHandler.get_review_info(); // Print all reviews
+    //     // Test getting review information
+    //     dbHandler.get_review_info(); // Print all reviews
     
-        // Test updating review information
-        dbHandler.update_review_info(1, "B12345", 1, "Review 1 Updated", "This is updated review 1", 4, "https://example.com/user1-updated");
+    //     // Test updating review information
+    //     dbHandler.update_review_info(1, "B12345", 1, "Review 1 Updated", "This is updated review 1", 4, "https://example.com/user1-updated");
     
-        // Test deleting review information
-        dbHandler.delete_review_info("B12345", 2);
+    //     // Test deleting review information
+    //     dbHandler.delete_review_info("B12345", 2);
     
-        // Test adding product categories
-        dbHandler.add_product_category("B12345", "Electronics");
-        dbHandler.add_product_category("B12345", "Gadgets");
-        dbHandler.add_product_category("B67890", "Clothing");
-        dbHandler.add_product_category("B67890", "Accessories");
+    //     // Test adding product categories
+    //     dbHandler.add_product_category("B12345", "Electronics");
+    //     dbHandler.add_product_category("B12345", "Gadgets");
+    //     dbHandler.add_product_category("B67890", "Clothing");
+    //     dbHandler.add_product_category("B67890", "Accessories");
     
-        // Test getting all product categories
-        List<Map<String, Object>> categoriesList = dbHandler.get_all_product_categories();
-        for (Map<String, Object> categoryMap : categoriesList) {
-            for (Map.Entry<String, Object> entry : categoryMap.entrySet()) {
-                System.out.println("ASIN: " + entry.getKey() + ", Category: " + entry.getValue());
-            }
-        }
+    //     // Test getting all product categories
+    //     List<Map<String, Object>> categoriesList = dbHandler.get_all_product_categories();
+    //     for (Map<String, Object> categoryMap : categoriesList) {
+    //         for (Map.Entry<String, Object> entry : categoryMap.entrySet()) {
+    //             System.out.println("ASIN: " + entry.getKey() + ", Category: " + entry.getValue());
+    //         }
+    //     }
     
-        // Test getting categories for a specific ASIN
-        List<String> categoriesForASIN = dbHandler.get_categories_from_asin("B12345");
-        System.out.println("Categories for ASIN B12345: " + categoriesForASIN);
+    //     // Test getting categories for a specific ASIN
+    //     List<String> categoriesForASIN = dbHandler.get_categories_from_asin("B12345");
+    //     System.out.println("Categories for ASIN B12345: " + categoriesForASIN);
     
-        // Test getting ASINs for a specific category
-        List<String> asinsForCategory = dbHandler.get_asin_from_categories("Electronics");
-        System.out.println("ASINs for category Electronics: " + asinsForCategory);
+    //     // Test getting ASINs for a specific category
+    //     List<String> asinsForCategory = dbHandler.get_asin_from_categories("Electronics");
+    //     System.out.println("ASINs for category Electronics: " + asinsForCategory);
     
-        // Test getting category count
-        List<Map<String, Integer>> categoryCountList = dbHandler.get_category_count();
-        for (Map<String, Integer> categoryCount : categoryCountList) {
-            for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
-                System.out.println("Category: " + entry.getKey() + ", Count: " + entry.getValue());
-            }
-        }
+    //     // Test getting category count
+    //     List<Map<String, Integer>> categoryCountList = dbHandler.get_category_count();
+    //     for (Map<String, Integer> categoryCount : categoryCountList) {
+    //         for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
+    //             System.out.println("Category: " + entry.getKey() + ", Count: " + entry.getValue());
+    //         }
+    //     }
     
-        // Close the connection
-        dbHandler.closeConnection();
-    }
+    //     // Close the connection
+    //     dbHandler.closeConnection();
+    // }
     
     }
     

@@ -17,7 +17,7 @@ public class App {
     public App(){
         handler = new Database_handler();
         preprocessor = new Data_preprocessor();
-        categories = new String[]{}; // Jannhavi input category values here
+        categories = new String[]{"Mobiles","Computers","TV","Appliances","Electronics","Men's Fashion","Women's Fashion","Home","Kitchen","Pets","Beauty","Health","Personal Care","Grocery","Sports","Fitness","Bags","Luggage","Toys","Baby Products","Kid's Fashion","Car","Motorbike","Industrial","Books","Movies","Music","Video Games"}; // Jannhavi input category values here
     }
     public static void main(String[] args) throws Exception {
         App app = new App();
@@ -56,6 +56,12 @@ public class App {
                 categories_to_add_to_database.add(categories_input);
             }
         }
+        app.handler.extractor_and_preprocess(asins_to_add_to_database, categories_to_add_to_database);
+        for(String asin_2: asins_to_add_to_database){
+            result.put(asin, app.handler.get_result(asin_2));
+        }
+        // Display Result
+
 
     }
 }

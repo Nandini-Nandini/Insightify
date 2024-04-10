@@ -1,7 +1,5 @@
 package data_extractor;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,33 +28,65 @@ public class Amazon_scraper {
     public Amazon_scraper(List<String> asins) {
         this.asins = asins;
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
+        // chromeOptions.addArguments("--headless");
+        // Disable images
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--disable-extensions");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--disable-infobars");
+        chromeOptions.addArguments("--disable-notifications");
+        chromeOptions.addArguments("--disable-images");
+        chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
         this.driver = new ChromeDriver(chromeOptions);
+        
         try{
             scrapeData();
         }catch(Exception e){
-            Static_utils.log(e.getMessage(), "Amazon_scraper constructor");
+            Static_utils.log(e.toString(), "Amazon_scraper constructor");
+            e.printStackTrace();
         }
     }
     
     private void scrapeData() throws IOException {
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-
-        ChromeDriver driver = new ChromeDriver(chromeOptions);
         List<Object> product_infos = new ArrayList<>();
         List<Object> reviews = new ArrayList<>();
         for (String asin: asins){
             String dp_url = "https://www.amazon.in/dp/"+asin;
-            driver.get(dp_url);
-            Map<String, Object> product_info = get_product_information(driver.getPageSource(),dp_url, asin);
+            // this.driver.get(dp_url);
+            Document doc;
+            System.out.println("Opening URL");
+            for(int i =0; i<20;i++){
+                try{
+                    this.driver.get(dp_url);
+                    doc = Jsoup.parse(this.driver.getPageSource());
+                    doc.select(".a-size-large.product-title-word-break").get(0);
+                    System.out.println("Breaking");
+                    break;
+                }catch(Exception e){
+                    System.out.println("Reloading attempt: "+(i+1));
+                    
+                }
+            }
+            
+
+            // try{
+            //     wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".a-size-large.product-title-word-break")));
+            // }catch(Exception e){
+            //     System.out.println("Getting URL Again");
+            //     this.driver.get(dp_url);
+            // }
+            
+            Map<String, Object> product_info = get_product_information(this.driver.getPageSource(),dp_url, asin);
             Map<String, Object> reviews_from_all_page = extract_reviews_all_page(asin);
 
             product_info.put("no_reviews", reviews_from_all_page.remove("product_review_count"));
             product_infos.add(product_info);
             reviews.add(reviews_from_all_page);
         }
-        driver.quit();
+        // driver.close();
+        this.driver.quit();
+        this.driver.quit();   
         this.final_product_infos = product_infos;
         this.final_reviews = reviews;
     }
@@ -124,7 +154,6 @@ public class Amazon_scraper {
             // Extracting review title
             String reviewTitle = "";
             try {
-                // reviewTitle = reviewDiv.select("a[data-hook=review-title]").first().text().trim().split("\n")[0];
                 reviewTitle = reviewDiv.select("a[data-hook=review-title]").first().text().trim();
             } catch (Exception ignored) {}
 
@@ -168,22 +197,39 @@ public class Amazon_scraper {
         List<String> finalStarRatings = new ArrayList<>();
         List<String> finalProfileLinks = new ArrayList<>();
 
-        String baseUrl = "https://www.amazon.in/product-reviews/" + asin + "/ref=cm_cr_arp_d_viewopt_sr?formatType=current_format";
-        driver.get(baseUrl);
+        String baseUrl = "https://www.amazon.in/product-reviews/" + asin + "/ref=cm_cr_arp_d_viewopt_sr?formatType=all_formats";
+    
 
+        for (int i =0; i<20;i++){
+            try{
+                this.driver.get(baseUrl);
+                Document doc = Jsoup.parse(this.driver.getPageSource());
+                doc.select("div.a-row.a-spacing-base.a-size-base").get(0);
+                System.out.println("breaking review");
+                break;
+            }catch(Exception e){
+                System.out.println("Reloading reviews attempt:"+(i+1));
+            }
+        }
         Document soup = Jsoup.parse(driver.getPageSource());
         Element reviewCountDiv = soup.selectFirst("div.a-row.a-spacing-base.a-size-base");
-        String reviewCountText = reviewCountDiv.text().trim().replace(",","").split("ratings ")[1].split("")[0];
+        String reviewCountText = reviewCountDiv.text().trim().replaceAll(",","").split("ratings ")[1].split(" ")[0];
         int reviewCountInteger = Integer.parseInt(reviewCountText);
+
+
+
         int counter = 0;
 
         for (String sort_by : new String[]{"recent", "helpful"}) {
             for (String review_type : new String[]{"avp_only_reviews"}) {
-                for (String star : new String[]{"all_star", "five_star", "four_star", "three_star", "two_star", "one_star"}) {
+                for (String star : new String[]{"all_star", "five_star", "four_star", "three_star", "two_star", "one_star"}) { //, "five_star", "four_star", "three_star", "two_star", "one_star"
                     for (int pgn = 1; pgn <= 10; pgn++) {
                         if (counter % 20 == 0) {
                             System.out.println("Progress: "+counter+" of 120 for product asin:"+asin);
+                        }else if(counter==119){
+                            System.out.println("Progress: 120 of 120 for product asin:"+asin);
                         }
+                        
                         String url = String.format("%s&sortBy=%s&pageNumber=%d&reviewerType=%s&filterByStar=%s", baseUrl, sort_by, pgn, review_type, star);
                         driver.get(url);
                         List<List<String>> reviews = extract_reviews_one_page(driver.getPageSource());
@@ -212,26 +258,28 @@ public class Amazon_scraper {
         return result;
     }
 
-    public static void main(String[] args) {
-        List<String> asins = new ArrayList<>();
-        asins.add("B01CCGW4OE");
-        // asins.add("B0BRQCJ57Y");
-        Amazon_scraper scraper = new Amazon_scraper(asins);
+    // public static void main(String[] args) {
+    //     List<String> asins = new ArrayList<>();
+    //     asins.add("B0BZCR6TNK");
+    //     asins.add("B07WHSR1NR");
+    //     // asins.add("B0BRQCJ57Y");
+    //     Amazon_scraper scraper = new Amazon_scraper(asins);
         
-        try {
-            // FileWriter with BufferedWriter to write data to file
-            FileWriter fw = new FileWriter("output.txt");
-            BufferedWriter bw = new BufferedWriter(fw);
+    //     try {
+    //         // FileWriter with BufferedWriter to write data to file
+    //         FileWriter fw = new FileWriter("output.txt");
+    //         BufferedWriter bw = new BufferedWriter(fw);
 
-            // Write variable data to the file
-            bw.write(scraper.get_result().toString());
+    //         // Write variable data to the file
+    //         bw.write(scraper.get_result().toString());
 
-            // Close the BufferedWriter
-            bw.close();
+    //         // Close the BufferedWriter
+    //         bw.close();
 
-            System.out.println("Variable data saved to output.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    //         System.out.println("Variable data saved to output.txt");
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+
 }
