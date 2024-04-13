@@ -6,7 +6,7 @@ import java.util.Properties;
 import org.ejml.simple.SimpleMatrix;
 
 import data_analysis.model.SentimentClassification;
-import data_analysis.model.SentimentClassification.SentimentCategory;
+
 import data_analysis.model.SentimentResult;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
@@ -24,7 +24,8 @@ public class SentimentAnalyzer {
     public void initialize() {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and sentiment
         props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
+        props.setProperty("annotators", "tokenize, ssplit,pos,lemma, parse, sentiment");
+        props.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger");
         pipeline = new StanfordCoreNLP(props);
     }
 
@@ -51,27 +52,32 @@ public class SentimentAnalyzer {
                     sm.get(2)  // Neutral
                 };
 
-                // Get the index of the category with the highest probability
-                int maxIndex = 0;
-                for (int i = 1; i < probabilities.length; i++) {
-                    if (probabilities[i] > probabilities[maxIndex]) {
-                        maxIndex = i;
-                    }
-                }
+                // // Get the index of the category with the highest probability
+                // int maxIndex = 0;
+                // for (int i = 1; i < probabilities.length; i++) {
+                //     if (probabilities[i] > probabilities[maxIndex]) {
+                //         maxIndex = i;
+                //     }
+                // }
 
-                // Set the sentiment category
-                switch (maxIndex) {
-                    case 0:
-                        sentimentClass.setPositive(SentimentCategory.POSITIVE);
-                        break;
-                    case 1:
-                        sentimentClass.setNegative(SentimentCategory.NEGATIVE);
-                        break;
-                    case 2:
-                        sentimentClass.setNeutral(SentimentCategory.NEUTRAL);
-                        break;
-                }
-
+                // // Set the sentiment category
+                // switch (maxIndex) {
+                //     case 0:
+                //         sentimentClass.setPositive(SentimentCategory.POSITIVE);
+                //         break;
+                //     case 1:
+                //         sentimentClass.setNegative(SentimentCategory.NEGATIVE);
+                //         break;
+                //     case 2:
+                //         sentimentClass.setNeutral(SentimentCategory.NEUTRAL);
+                //         break;
+                // }
+                
+				sentimentClass.setPositive((double)Math.round(probabilities[0] * 100d));
+				sentimentClass.setNeutral((double)Math.round(probabilities[2] * 100d));
+				sentimentClass.setNegative((double)Math.round(probabilities[1] * 100d));
+				
+                sentimentResult.setSentimentScore(RNNCoreAnnotations.getPredictedClass(tree));
                 sentimentResult.setSentimentType(sentimentType);
                 sentimentResult.setSentimentClass(sentimentClass);
             }

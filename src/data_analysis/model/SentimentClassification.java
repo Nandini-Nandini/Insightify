@@ -1,37 +1,33 @@
 package data_analysis.model;
 
 public class SentimentClassification {
-    public enum SentimentCategory {
-        POSITIVE,
-        NEGATIVE,
-        NEUTRAL
-    }
+   
 
-    private SentimentCategory positive;
-    private SentimentCategory neutral;
-    private SentimentCategory negative;
+    private double  positive;
+    private double neutral;
+    private double negative;
 
-    public SentimentCategory getPositive() {
+    public double getPositive() {
         return positive;
     }
 
-    public void setPositive(SentimentCategory positive) {
+    public void setPositive(double positive) {
         this.positive = positive;
     }
 
-    public SentimentCategory getNeutral() {
+    public double getNeutral() {
         return neutral;
     }
 
-    public void setNeutral(SentimentCategory neutral) {
+    public void setNeutral(double neutral) {
         this.neutral = neutral;
     }
 
-    public SentimentCategory getNegative() {
+    public double getNegative() {
         return negative;
     }
 
-    public void setNegative(SentimentCategory negative) {
+    public void setNegative(double negative) {
         this.negative = negative;
     }
 }
