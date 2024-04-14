@@ -115,6 +115,36 @@ public class Database_handler {
         }
     }
 
+    public boolean create_table_review_sentiments(){
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS review_sentiments (" +
+                    "review_id VARCHAR(255) PRIMARY KEY," +
+                    "sentiment_score Double NOT NULL," +
+                    "FOREIGN KEY (review_id) REFERENCES reviews(review_id) ON DELETE CASCADE)";
+            stmt.executeUpdate(sql);
+            return true;
+        } catch (SQLException e) {
+            Static_utils.log("Error creating review_sentiments table: " + e.getMessage(), "create_table_review_sentiments");
+            return false;
+        }
+    }
+
+    public boolean create_table_product_results(){
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS product_results (" +
+                    "asin VARCHAR(255) PRIMARY KEY," +
+                    "composite_score Double NOT NULL," +
+                    "FOREIGN KEY (asin) REFERENCES products(asin) ON DELETE CASCADE)";
+            stmt.executeUpdate(sql);
+            return true;
+        } catch (SQLException e) {
+            Static_utils.log("Error creating product_results table: " + e.getMessage(), "create_table_product_results");
+            return false;
+        }
+    }
+
 
     // CRUD Functions for products
     // Create
@@ -467,7 +497,28 @@ public class Database_handler {
             }
             
         }
+
+        public Map<String, List<String>> get_unanalyzed_review_texts(){
+            return null;
+        }
+
+        public boolean asin_exists(String asin){
+            return false;
+        }
         
+        public float get_result(String asin){
+            return 0f;
+        }
+
+        public Map<String, Object> get_result_generating_data(String asin){
+            return null;
+        }
+
+        public boolean insert_result(String asin, float result){
+            return false;
+        }
+
+
         
 
 

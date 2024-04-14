@@ -25,7 +25,7 @@ public class App {
         System.out.println("Enter the number of products to compare:");
         int products_to_compare = sc.nextInt();
         List<String> asins_to_compare = new ArrayList<>();
-        String asin;
+        String asin = "";
         int category_fit;
         List<String> asins_to_add_to_database = new ArrayList<>();
         List<List<String>> categories_to_add_to_database = new ArrayList<>();
@@ -56,12 +56,12 @@ public class App {
                 categories_to_add_to_database.add(categories_input);
             }
         }
-        app.handler.extractor_and_preprocess(asins_to_add_to_database, categories_to_add_to_database);
+        app.preprocessor.extract_and_preprocess(asins_to_add_to_database, categories_to_add_to_database);
         for(String asin_2: asins_to_add_to_database){
             result.put(asin, app.handler.get_result(asin_2));
         }
         // Display Result
 
-
+        sc.close();
     }
 }
