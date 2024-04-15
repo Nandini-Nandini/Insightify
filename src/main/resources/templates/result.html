@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>ASIN existence checker in database</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ASIN Value</th>
+            <th>Existence</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Use Thymeleaf to iterate over ASIN values and their lengths -->
+        <tr th:each="value, index : ${asins}">
+            <td th:text="${value}"></td>
+            <td th:text="${asins_exist[__${index.index}__]}"></td>
+        </tr>
+    </tbody>
+</table>
+
+<p>If all exists: <span th:text="${all_asins_exist}"></span></p>
+
+</body>
+</html>

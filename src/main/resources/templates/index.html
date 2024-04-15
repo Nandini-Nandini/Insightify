@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insightify Comparator</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h1 class="heading">Insightify Comparator</h1>
+  <form id="asinForm" action="get_result", method="post">
+    <table id="asinInputs">
+      <tr class="asin-input">
+        <td><label for="asin1">Enter Product 1 ASIN:</label></td>
+        <td><input type="text" name="asin[]" id="asin1" placeholder="Enter ASIN 1" required></td>
+      </tr>
+      <tr class="asin-input">
+        <td><label for="asin2">Enter Product 2 ASIN:</label></td>
+        <td><input type="text" name="asin[]" id="asin2" placeholder="Enter ASIN 2" required></td>
+      </tr>
+    </table>
+    <div class="buttons">
+      <button type="button" onclick="addMore()">Add More</button>
+      <button type="button" onclick="deleteInput()">Delete</button>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+
+<script>
+var inputCount = 2;
+
+function addMore() {
+  inputCount++;
+  var inputRow = document.createElement('tr');
+  inputRow.className = 'asin-input';
+  inputRow.innerHTML = '<td><label for="asin' + inputCount + '">Enter Product ' + inputCount + ' ASIN:</label></td>' +
+                       '<td><input type="text" name="asin[]" id="asin' + inputCount + '" placeholder="Enter ASIN ' + inputCount + '" required></td>';
+  document.getElementById('asinInputs').appendChild(inputRow);
+}
+
+function deleteInput() {
+  var inputRows = document.getElementsByClassName('asin-input');
+  if (inputRows.length > 2) {
+    inputRows[inputRows.length - 1].remove();
+    inputCount--;
+  } else {
+    alert('At least two ASIN inputs should be present.');
+  }
+}
+</script>
+
+</body>
+</html>
