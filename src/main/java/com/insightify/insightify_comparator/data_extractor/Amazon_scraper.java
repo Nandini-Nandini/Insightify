@@ -1,5 +1,7 @@
 package com.insightify.insightify_comparator.data_extractor;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +41,8 @@ public class Amazon_scraper {
         chromeOptions.addArguments("--disable-images");
         chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
         this.driver = new ChromeDriver(chromeOptions);
+        // this.driver = new ChromeDriver();
+
         
         try{
             scrapeData();
@@ -68,6 +72,18 @@ public class Amazon_scraper {
                     
                 }
             }
+            try{
+                doc = Jsoup.parse(this.driver.getPageSource());
+                doc.select(".a-size-large.product-title-word-break").get(0);
+                Map<String, Object> product_info = get_product_information(this.driver.getPageSource(),dp_url, asin);
+                Map<String, Object> reviews_from_all_page = extract_reviews_all_page(asin);
+
+                product_info.put("no_reviews", reviews_from_all_page.remove("product_review_count"));
+                product_infos.add(product_info);
+                reviews.add(reviews_from_all_page);
+            }catch(Exception e){
+                System.out.println("ASIN "+asin+" does not exist");
+            }
             
 
             // try{
@@ -77,12 +93,7 @@ public class Amazon_scraper {
             //     this.driver.get(dp_url);
             // }
             
-            Map<String, Object> product_info = get_product_information(this.driver.getPageSource(),dp_url, asin);
-            Map<String, Object> reviews_from_all_page = extract_reviews_all_page(asin);
-
-            product_info.put("no_reviews", reviews_from_all_page.remove("product_review_count"));
-            product_infos.add(product_info);
-            reviews.add(reviews_from_all_page);
+            
         }
         // driver.close();
         this.driver.quit();
@@ -258,28 +269,28 @@ public class Amazon_scraper {
         return result;
     }
 
-    // public static void main(String[] args) {
-    //     List<String> asins = new ArrayList<>();
-    //     asins.add("B0BZCR6TNK");
-    //     asins.add("B07WHSR1NR");
-    //     // asins.add("B0BRQCJ57Y");
-    //     Amazon_scraper scraper = new Amazon_scraper(asins);
+    public static void main(String[] args) {
+        List<String> asins = new ArrayList<>();
+        asins.add("B0BZCR6TNK");
+        asins.add("B07WHSR1NR");
+        // asins.add("B0BRQCJ57Y");
+        Amazon_scraper scraper = new Amazon_scraper(asins);
         
-    //     try {
-    //         // FileWriter with BufferedWriter to write data to file
-    //         FileWriter fw = new FileWriter("output.txt");
-    //         BufferedWriter bw = new BufferedWriter(fw);
+        try {
+            // FileWriter with BufferedWriter to write data to file
+            FileWriter fw = new FileWriter("output.txt");
+            BufferedWriter bw = new BufferedWriter(fw);
 
-    //         // Write variable data to the file
-    //         bw.write(scraper.get_result().toString());
+            // Write variable data to the file
+            bw.write(scraper.get_result().toString());
 
-    //         // Close the BufferedWriter
-    //         bw.close();
+            // Close the BufferedWriter
+            bw.close();
 
-    //         System.out.println("Variable data saved to output.txt");
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+            System.out.println("Variable data saved to output.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

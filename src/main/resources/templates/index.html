@@ -1,56 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Insightify Comparator</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insightify Comparator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
 </head>
+
 <body>
 
-<div class="container">
-  <h1 class="heading">Insightify Comparator</h1>
-  <form id="asinForm" action="get_result", method="post">
-    <table id="asinInputs">
-      <tr class="asin-input">
-        <td><label for="asin1">Enter Product 1 ASIN:</label></td>
-        <td><input type="text" name="asin[]" id="asin1" placeholder="Enter ASIN 1" required></td>
-      </tr>
-      <tr class="asin-input">
-        <td><label for="asin2">Enter Product 2 ASIN:</label></td>
-        <td><input type="text" name="asin[]" id="asin2" placeholder="Enter ASIN 2" required></td>
-      </tr>
-    </table>
-    <div class="buttons">
-      <button type="button" onclick="addMore()">Add More</button>
-      <button type="button" onclick="deleteInput()">Delete</button>
-      <button type="submit">Submit</button>
+    <div class="outermost">
+        <div class="header_bar">
+            <header>
+                <a href="/"><img src="logo.png" alt="Logo" class="logo"></a>
+                <div class="text-container">
+                    <h1><a href="/">Insightify</a></h1>
+                    <h3><a href="/">Amazon Review Sentiment Comparator</a></h3>
+                </div>
+            </header>
+        </div>
+        <main class="panel">
+            <div class="panel__half half--first">
+                <div class="half--first-content">
+                    <!-- first panel
+                heading
+                links for signing in through another platform
+                input elements to sign in with email
+                link in case the password was forgot
+                button to sign sign
+              -->
+                    <h2>Welcome User</h2>
+                    <p class="p-long">We give you a score for each product so you can compare them and make good purchasing deicsions. <strong><a href="/about_us">Know More</a></strong><br> Remember. The higher the score, the better the product is!</p>
+                    <p>Enter the product ASIN from Amazon to compare them!</p>
+                    <!-- <form class="input">
+                    <input type="text" placeholder="Email" />
+                    <input type="password" placeholder="Password" />
+                </form> -->
+                    <form id="asinForm" action="get_result" , method="post">
+                        <table id="asinInputs">
+                            <tr class="asin-input">
+                                <td><label for="asin1">Enter Product 1 ASIN:</label></td>
+                                <td><input type="text" name="asin[]" id="asin1" placeholder="Enter ASIN 1" required>
+                                </td>
+                            </tr>
+                            <tr class="asin-input">
+                                <td><label for="asin2">Enter Product 2 ASIN:</label></td>
+                                <td><input type="text" name="asin[]" id="asin2" placeholder="Enter ASIN 2" required>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="buttons">
+                            <button type="button" onclick="addMore()">Add More</button>
+                            <button type="button" onclick="deleteInput()">Delete</button>
+                            <button type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="panel__half half--second">
+                <!-- second panel
+                heading
+                paragraph explaining the panel
+                button to sign up (and later and actually siwtch the panel to show the sign up menu)
+              -->
+                <!-- <h2>Hello, friend!</h2>
+                <p>Enter your personal details and start your journey with us</p>
+        
+                <button>Sign up</button> -->
+                <h3>SERVICES:</h3>
+                <ol>
+                    <li>
+                        <strong>PRODUCT COMPARISON</strong>
+                        <p style="font-family: 'Open Sans', sans-serif;">Insightify offers a unique product comparison
+                            service that allows users to make informed decisions by comparing Amazon products based on a
+                            composite score derived from customer reviews.</p>
+                    </li>
+                    <li>
+                        <strong>COMPOSITE SCORING</strong>
+                        <p style="font-family: 'Open Sans', sans-serif;">Our platform utilizes advanced algorithms to
+                            calculate composite scores for Amazon products, providing users with a comprehensive
+                            evaluation of each item's overall customer satisfaction.</p>
+                    </li>
+                </ol>
+            </div>
+
+        </main>
+        <div class="footer_bar">
+            <footer>
+                <p> © 2024 Insightify Comparator | <a href="mailto:insightify.comparator@gmail.com">insightify.comparator@gmail.com</a> | <a href="/about_us">Contact & About us</a></p>
+            </footer>
+        </div>
     </div>
-  </form>
-</div>
 
-<script>
-var inputCount = 2;
 
-function addMore() {
-  inputCount++;
-  var inputRow = document.createElement('tr');
-  inputRow.className = 'asin-input';
-  inputRow.innerHTML = '<td><label for="asin' + inputCount + '">Enter Product ' + inputCount + ' ASIN:</label></td>' +
-                       '<td><input type="text" name="asin[]" id="asin' + inputCount + '" placeholder="Enter ASIN ' + inputCount + '" required></td>';
-  document.getElementById('asinInputs').appendChild(inputRow);
-}
+    <script>
+        var inputCount = 2;
 
-function deleteInput() {
-  var inputRows = document.getElementsByClassName('asin-input');
-  if (inputRows.length > 2) {
-    inputRows[inputRows.length - 1].remove();
-    inputCount--;
-  } else {
-    alert('At least two ASIN inputs should be present.');
-  }
-}
-</script>
+        function addMore() {
+            inputCount++;
+            var inputRow = document.createElement('tr');
+            inputRow.className = 'asin-input';
+            inputRow.innerHTML = '<td><label for="asin' + inputCount + '">Enter Product ' + inputCount + ' ASIN:</label></td>' +
+                '<td><input type="text" name="asin[]" id="asin' + inputCount + '" placeholder="Enter ASIN ' + inputCount + '" required></td>';
+            document.getElementById('asinInputs').appendChild(inputRow);
+        }
+
+        function deleteInput() {
+            var inputRows = document.getElementsByClassName('asin-input');
+            if (inputRows.length > 2) {
+                inputRows[inputRows.length - 1].remove();
+                inputCount--;
+            } else {
+                alert('At least two ASIN inputs should be present.');
+            }
+        }
+    </script>
 
 </body>
+
 </html>

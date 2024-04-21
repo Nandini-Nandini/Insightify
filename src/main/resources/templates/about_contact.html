@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About us | Insightify Comparator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+
+<body>
+
+    <div class="outermost">
+        <div class="header_bar">
+            <header>
+                <a href="/"><img src="logo.png" alt="Logo" class="logo"></a>
+                <div class="text-container">
+                    <h1><a href="/">Insightify</a></h1>
+                    <h3><a href="/">Amazon Review Sentiment Comparator</a></h3>
+                </div>
+            </header>
+        </div>
+        <main class="panel">
+            <div class="panel__half half--first">
+                <div class="half--first-content">
+                    <!-- first panel
+                heading
+                links for signing in through another platform
+                input elements to sign in with email
+                link in case the password was forgot
+                button to sign sign
+              -->
+                    <h3>🎉 Let's Meet Our Super-Duper Awesome Team! 🎉</h3>
+                    <p class="p-long">Alright, brace yourselves, because you're about to dive headfirst into a world of
+                        sheer brilliance, unparalleled talent, and a whole lot of sass. 🌟 But hey, don't take our word
+                        for it! Everything you're about to read below is 100% certified, Grade-A, prime-cut
+                        bragging...courtesy of Jannhavi's imagination. So, without further ado, let's introduce you to
+                        the superheroes behind the screens:</p>
+                    <div>
+                        <h2><strong>Jannhavi</strong></h2>
+                        <p class="p-long"><em>Serial Chiller</em> 🦄</p>
+                        <p class="p-long">By day, Jannhavi transforms into a data wrangler extraordinaire! 📊 Taming
+                            spreadsheets and wrangling databases might sound chaotic (think corralling kittens!), but
+                            she loves the challenge. Sure, she can build a basic website and speak the language of data
+                            (enough to not get lost, at least!). But her true superpower lies in transforming that data
+                            into actionable insights that make a positive impact! 💡 But enough about the day job -
+                            let's get to the fun stuff! After hours, she unleashes her inner creative butterfly. 🦋
+                            You'll find her rocking a killer outfit at an event she helped plan, or grabbing the mic and
+                            inspiring the crowd with a public speech. Oh BTW, she loves shopping on Amazon (now you know
+                            why this project exists!) 🛍️</p>
+                    </div>
+                    <div>
+                        <h2><strong>Mayank</strong></h2>
+                        <p class="p-long"><em>Vibe Killer</em> 💻</p>
+                        <p class="p-long"><em>Level 100 Coding Master Here!</em> 💥 Mayank's love for code runs deeper
+                            than lines in a Python script. He can practically code in his sleep (well, maybe not
+                            literally, but close enough). Finding a coding partner-in-crime might be a challenge, but
+                            hey, maybe he'll code the perfect one someday (don't worry, that's a joke... for now). 😄 In
+                            all seriousness, he takes immense joy in crafting innovative solutions with the power of
+                            code. It's like magic, but instead of wands, he uses algorithms and APIs. 🪄 Think of him as
+                            Neo from the Matrix, but instead of dodging bullets, he's dodging bugs and deploying
+                            awesomeness.</p>
+                    </div>
+                    <div>
+                        <h2><strong>Nandini</strong></h2>
+                        <p class="p-long"><em>Senior Drama-Queen</em> 🎨</p>
+                        <p class="p-long">Adventure and design are Nandini's jam! 🌈 She's basically Indiana Jones with
+                            a knack for data extraction, analysis, and whipping up killer designs. Don't get her wrong,
+                            she can totally lead the team if needed (low-key boss moves, you know?), but most of the
+                            time she's just a chill vibe master. 😎 That is, until a deadline approaches. Then, let's
+                            just say things get...interesting. 😅 Think caffeinated whirlwind of creativity fueled by
+                            sheer panic. But hey, somehow the magic always happens! ✨ Call her your laid-back design
+                            ninja with a side of deadline drama.</p>
+                    </div>
+                    <p class="p-long"><em>(P.S. If you think these descriptions are a bit much, maybe Jannhavi had a
+                            hand in them!)</em> 🙄 Because, you know, she totally thinks she's all that when she's just
+                        a "Chiller"! 😄</p>
+
+                </div>
+            </div>
+
+
+            <div class="panel__half half--second">
+
+                <h3>Know more about our project?</h3>
+                <p class="p-long">Hey, if you're wondering what Insightify is all about, it's like having your personal
+                    product detective! 🕵️‍♂️ We compare Amazon product reviews, sprinkle a bit of magic, and voila! You
+                    get a score to help you make those oh-so-important buying decisions. Because who needs buyer's
+                    remorse, right? 😄</p>
+                    <p class="p-long">Got burning questions or just want to say hi? Drop us a line at <strong><a href="mailto:insightify.comparator@gmail.com">insightify.comparator@gmail.com</a></strong><br>Don't worry, our inbox is about as organized as a squirrel's pantry! 📧 We'll be sure to reply to all your queries faster than a cheetah chasing its next meal!</p>
+
+
+
+            </div>
+
+        </main>
+        <div class="footer_bar">
+            <footer>
+                <p> © 2024 Insightify Comparator | <a
+                        href="mailto:insightify.comparator@gmail.com">insightify.comparator@gmail.com</a> | <a
+                        href="/about_us">Contact & About us</a></p>
+            </footer>
+        </div>
+    </div>
+
+
+    <script>
+        var inputCount = 2;
+
+        function addMore() {
+            inputCount++;
+            var inputRow = document.createElement('tr');
+            inputRow.className = 'asin-input';
+            inputRow.innerHTML = '<td><label for="asin' + inputCount + '">Enter Product ' + inputCount + ' ASIN:</label></td>' +
+                '<td><input type="text" name="asin[]" id="asin' + inputCount + '" placeholder="Enter ASIN ' + inputCount + '" required></td>';
+            document.getElementById('asinInputs').appendChild(inputRow);
+        }
+
+        function deleteInput() {
+            var inputRows = document.getElementsByClassName('asin-input');
+            if (inputRows.length > 2) {
+                inputRows[inputRows.length - 1].remove();
+                inputCount--;
+            } else {
+                alert('At least two ASIN inputs should be present.');
+            }
+        }
+    </script>
+
+</body>
+
+</html>

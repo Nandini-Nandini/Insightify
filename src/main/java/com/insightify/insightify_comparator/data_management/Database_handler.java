@@ -407,216 +407,258 @@ public class Database_handler {
 
         //create
 
-        public boolean add_product_category(String asin, String category) {
-            try {
-                create_table_product_category();
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "INSERT INTO product_category (asin, category) VALUES (?, ?)"
-                );
-                pstmt.setString(1, asin);
-                pstmt.setString(2, category);
-                int rowsAffected = pstmt.executeUpdate();
-                return rowsAffected > 0;
-            } catch (SQLException e) {
-                Static_utils.log("Error adding product category: " + e.getMessage(), "add_product_category");
-                return false;
-            }
-        }
-
-        //Read
-
-        public List<Map<String, Object>> get_all_product_categories() {
-            List<Map<String, Object>> categoriesList = new ArrayList<>();
-            try {
-                Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM product_category");
-                while (rs.next()) {
-                    Map<String, Object> categoryMap = new HashMap<>();
-                    categoryMap.put("ASIN", rs.getString("asin"));
-                    categoryMap.put("Category", rs.getString("category"));
-                    categoriesList.add(categoryMap);
-                }
-            } catch (SQLException e) {
-                Static_utils.log("Error reading product categories: " + e.getMessage(), "get_all_product_categories");
-            }
-            return categoriesList;
-        }
-
-        public List<String> get_categories_from_asin(String asin) {
-            List<String> categoriesList = new ArrayList<>();
-            try {
-                String query = "SELECT category FROM product_category WHERE asin = ?";
-                PreparedStatement pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, asin);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    String category = rs.getString("category");
-                    categoriesList.add(category);
-                }
-                return categoriesList;
-            } catch (SQLException e) {
-                Static_utils.log("Error getting categories for ASIN " + asin + ": " + e.getMessage(), "get_categories_from_asin");
-                return null;
-            }
-            
-        }
-
-        public List<String> get_asin_from_categories(String category) {
-            List<String> asinList = new ArrayList<>();
-            try {
-                String query = "SELECT asin FROM product_category WHERE category = ?";
-                PreparedStatement pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, category);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    String asin = rs.getString("asin");
-                    asinList.add(asin);
-                }
-                return asinList;
-            } catch (SQLException e) {
-                Static_utils.log("Error getting ASINs for category " + category + ": " + e.getMessage(), "get_asin_from_categories");
-                return null;
-            }
-            
-        }
-
-        public List<Map<String, Integer>> get_category_count() {
-            List<Map<String, Integer>> categoryCountList = new ArrayList<>();
-            try {
-                String query = "SELECT category, COUNT(*) as count FROM product_category GROUP BY category";
-                Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery(query);
-                while (rs.next()) {
-                    String category = rs.getString("category");
-                    int count = rs.getInt("count");
-                    Map<String, Integer> categoryCount = new HashMap<>();
-                    categoryCount.put(category, count);
-                    categoryCountList.add(categoryCount);
-                }
-                return categoryCountList;
-            } catch (SQLException e) {
-                Static_utils.log("Error getting category count: " + e.getMessage(), "get_category_count");
-                return null;
-            }
-            
-        }
-        public boolean  add_review_sentiment(String review_id, float sentiment_score) {
-            try {
-                create_table_review_sentiments();
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "INSERT INTO review_sentiments (review_id, sentiment_score) VALUES (?, ?)"
-                );
-                pstmt.setString(1, review_id);
-                pstmt.setFloat(2, sentiment_score);
-                pstmt.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                Static_utils.log("Error adding review sentiment: " + e.getMessage(),"add_review_sentiment");
-                return false;
-            }
-        }
-
-        public float get_review_sentiment(String review_id) {
-            try {
-                String query = "SELECT sentiment_score FROM review_sentiments WHERE review_id = ?";
-                PreparedStatement pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, review_id);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    float sentiment_score = rs.getFloat("sentiment_score");
-                    return sentiment_score;
-                }
-                return 0f;
-            } catch (SQLException e) {
-                Static_utils.log("Error getting sentiment score for review_id " + review_id + ": " + e.getMessage(), "get_review_sentiment");
-                return 0f;
-            }
-        }
-            
-        
-
-        public boolean  add_product_composite_score(String asin, float composite_score) {
-            try {
-                create_table_product_results();
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "INSERT INTO product_results (asin, composite_score) VALUES (?, ?)"
-                );
-                pstmt.setString(1, asin);
-                pstmt.setFloat(2, composite_score);
-                pstmt.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                Static_utils.log("Error adding product composite score: " + e.getMessage(),"add_product_composite_score");
-                return false;
-            }
-        }
-
-        public List<Map<String, String>> get_unanalyzed_review_texts(){
-            List<Map<String, String>> reviewsList = new ArrayList<>();
-            try {
-                String query = "select review_id, review_text from reviews where review_id not in (select review_id from review_sentiments);";
-                Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery(query);
-                while (rs.next()) {
-                    String review_id = rs.getString("review_id");
-                    String review_text = rs.getString("review_text");
-                    Map<String, String> review = new HashMap<>();
-                    review.put("review_id", review_id);
-                    review.put("review_text", review_text);
-                    reviewsList.add(review);
-                }
-                return reviewsList;
-            } catch (SQLException e) {
-                Static_utils.log("Error getting unanalyzed review_texts: " + e.getMessage(), "get_unanalyzed_review_texts");
-                return null;
-            }
-        }
-
-        public boolean asin_exists(String asin){
-            try {
-                String query = "SELECT count(*) as res FROM products WHERE asin = ?";
-                PreparedStatement pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, asin);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    float result = rs.getFloat("res");
-                    if (result==1){
-                        return true;
-                    }
-                }
-                return false;
-            } catch (SQLException e) {
-                Static_utils.log("Error checking if asin exists for ASIN " + asin + ": " + e.getMessage(), "asin_exists");
-                return false;
-            }
-        }
-        
-        public float get_product_composite_score(String asin){
-            try {
-                String query = "SELECT composite_score FROM product_results WHERE asin = ?";
-                PreparedStatement pstmt = connection.prepareStatement(query);
-                pstmt.setString(1, asin);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    float composite_score = rs.getFloat("composite_score");
-                    return composite_score;
-                }
-                return 0f;
-            } catch (SQLException e) {
-                Static_utils.log("Error getting composite score for ASIN " + asin + ": " + e.getMessage(), "get_product_composite_score");
-                return 0f;
-            }
-        }
-
-        public Map<String, Object> get_result_generating_data(String asin){
-            return null;
-        }
-
-        public boolean insert_result(String asin, float result){
+    public boolean add_product_category(String asin, String category) {
+        try {
+            create_table_product_category();
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "INSERT INTO product_category (asin, category) VALUES (?, ?)"
+            );
+            pstmt.setString(1, asin);
+            pstmt.setString(2, category);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Static_utils.log("Error adding product category: " + e.getMessage(), "add_product_category");
             return false;
         }
+    }
 
+    //Read
 
+    public List<Map<String, Object>> get_all_product_categories() {
+        List<Map<String, Object>> categoriesList = new ArrayList<>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM product_category");
+            while (rs.next()) {
+                Map<String, Object> categoryMap = new HashMap<>();
+                categoryMap.put("ASIN", rs.getString("asin"));
+                categoryMap.put("Category", rs.getString("category"));
+                categoriesList.add(categoryMap);
+            }
+        } catch (SQLException e) {
+            Static_utils.log("Error reading product categories: " + e.getMessage(), "get_all_product_categories");
+        }
+        return categoriesList;
+    }
+
+    public List<String> get_categories_from_asin(String asin) {
+        List<String> categoriesList = new ArrayList<>();
+        try {
+            String query = "SELECT category FROM product_category WHERE asin = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, asin);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                String category = rs.getString("category");
+                categoriesList.add(category);
+            }
+            return categoriesList;
+        } catch (SQLException e) {
+            Static_utils.log("Error getting categories for ASIN " + asin + ": " + e.getMessage(), "get_categories_from_asin");
+            return null;
+        }
+        
+    }
+
+    public List<String> get_asin_from_categories(String category) {
+        List<String> asinList = new ArrayList<>();
+        try {
+            String query = "SELECT asin FROM product_category WHERE category = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, category);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                String asin = rs.getString("asin");
+                asinList.add(asin);
+            }
+            return asinList;
+        } catch (SQLException e) {
+            Static_utils.log("Error getting ASINs for category " + category + ": " + e.getMessage(), "get_asin_from_categories");
+            return null;
+        }
+        
+    }
+
+    public List<Map<String, Integer>> get_category_count() {
+        List<Map<String, Integer>> categoryCountList = new ArrayList<>();
+        try {
+            String query = "SELECT category, COUNT(*) as count FROM product_category GROUP BY category";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                String category = rs.getString("category");
+                int count = rs.getInt("count");
+                Map<String, Integer> categoryCount = new HashMap<>();
+                categoryCount.put(category, count);
+                categoryCountList.add(categoryCount);
+            }
+            return categoryCountList;
+        } catch (SQLException e) {
+            Static_utils.log("Error getting category count: " + e.getMessage(), "get_category_count");
+            return null;
+        }
+        
+    }
+    public boolean  add_review_sentiment(String review_id, float sentiment_score) {
+        try {
+            create_table_review_sentiments();
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "INSERT INTO review_sentiments (review_id, sentiment_score) VALUES (?, ?)"
+            );
+            pstmt.setString(1, review_id);
+            pstmt.setFloat(2, sentiment_score);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            Static_utils.log("Error adding review sentiment: " + e.getMessage(),"add_review_sentiment");
+            return false;
+        }
+    }
+
+    public float get_review_sentiment(String review_id) {
+        try {
+            String query = "SELECT sentiment_score FROM review_sentiments WHERE review_id = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, review_id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                float sentiment_score = rs.getFloat("sentiment_score");
+                return sentiment_score;
+            }
+            return 0f;
+        } catch (SQLException e) {
+            Static_utils.log("Error getting sentiment score for review_id " + review_id + ": " + e.getMessage(), "get_review_sentiment");
+            return 0f;
+        }
+    }
+        
+    
+
+    public boolean  add_product_composite_score(String asin, float composite_score) {
+        try {
+            create_table_product_results();
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "INSERT INTO product_results (asin, composite_score) VALUES (?, ?)"
+            );
+            pstmt.setString(1, asin);
+            pstmt.setFloat(2, composite_score);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            Static_utils.log("Error adding product composite score: " + e.getMessage(),"add_product_composite_score");
+            return false;
+        }
+    }
+
+    public List<Map<String, String>> get_unanalyzed_review_texts(){
+        List<Map<String, String>> reviewsList = new ArrayList<>();
+        try {
+            String query = "select review_id, review_text from reviews where review_id not in (select review_id from review_sentiments);";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                String review_id = rs.getString("review_id");
+                String review_text = rs.getString("review_text");
+                Map<String, String> review = new HashMap<>();
+                review.put("review_id", review_id);
+                review.put("review_text", review_text);
+                reviewsList.add(review);
+            }
+            return reviewsList;
+        } catch (SQLException e) {
+            Static_utils.log("Error getting unanalyzed review_texts: " + e.getMessage(), "get_unanalyzed_review_texts");
+            return null;
+        }
+    }
+
+    public boolean asin_exists(String asin){
+        try {
+            String query = "SELECT count(*) as res FROM products WHERE asin = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, asin);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                float result = rs.getFloat("res");
+                if (result==1){
+                    return true;
+                }
+            }
+            return false;
+        } catch (SQLException e) {
+            Static_utils.log("Error checking if asin exists for ASIN " + asin + ": " + e.getMessage(), "asin_exists");
+            return false;
+        }
+    }
+    
+    public float get_product_composite_score(String asin){
+        try {
+            String query = "SELECT composite_score FROM product_results WHERE asin = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, asin);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                float composite_score = rs.getFloat("composite_score");
+                return composite_score;
+            }
+            return 0f;
+        } catch (SQLException e) {
+            Static_utils.log("Error getting composite score for ASIN " + asin + ": " + e.getMessage(), "get_product_composite_score");
+            return 0f;
+        }
+    }
+
+    // Method to calculate product scores
+    public boolean calculate_product_scores() {
+        try {
+            // Call the stored procedure
+            PreparedStatement pstmt = connection.prepareStatement("CALL update_product_score_proc()");
+            pstmt.execute();
+            return true;
+        } catch (SQLException e) {
+            // Log error and return false if any exception occurs
+            e.printStackTrace();
+            Static_utils.log("Error calculating product_scores " + e.getMessage(), "calculate_product_scores");
+            return false;
+        }
+    }
+
+    public List<Map<String, Object>> get_product_score_data_for_webpage(List<String> asins) {
+        List<Map<String, Object>> productScores = new ArrayList<>();
+        try {
+            // Create the SQL query
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("SELECT asin, product_name, final_score FROM product_score WHERE asin IN (");
+            for (int i = 0; i < asins.size(); i++) {
+                if (i > 0) {
+                    queryBuilder.append(",");
+                }
+                queryBuilder.append("?");
+            }
+            queryBuilder.append(") order by final_score desc");
+
+            // Prepare and execute the SQL statement
+            String query = queryBuilder.toString();
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            for (int i = 0; i < asins.size(); i++) {
+                pstmt.setString(i + 1, asins.get(i));
+            }
+            ResultSet rs = pstmt.executeQuery();
+
+            // Process the result set and populate the list of maps
+            while (rs.next()) {
+                Map<String, Object> productScore = new HashMap<>();
+                productScore.put("asin", rs.getString("asin"));
+                productScore.put("product_name", rs.getString("product_name"));
+                productScore.put("final_score", rs.getFloat("final_score"));
+                productScores.add(productScore);
+            }
+        } catch (SQLException e) {
+            // Log error and return an empty list if any exception occurs
+            Static_utils.log("Error getting product_score_data for webpage" + e.getMessage(), "get_product_score_data_for_webpage");
+        }
+        return productScores;
+    }
         
 
 
