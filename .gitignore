@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/resources/client_secret_604185964432-t3a721sa1g8m1dfibv037lknpfa9os45.apps.googleusercontent.com.json
+tokens/StoredCredential
